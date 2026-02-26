@@ -14,3 +14,14 @@ class OrderStatus(model.Model):
 
     def __str__(self):
         return self.name
+
+
+class Coupon(models.model):
+    code = models.CharField(max_length=50,unique=True)
+    discount_percentage = models.DecimalField(max_digit=5,decimal_places=2)
+    is_active = models.BooleanField(default=True)
+    valid_from = models.DataField()
+    valid_until = models.DataField()
+
+    def __str__(self):
+        return self.code
