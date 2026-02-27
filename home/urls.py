@@ -15,4 +15,9 @@ urlpatterns = [
     name='menu-items-by-category'
     ),
     
+    path (
+        'api/atbles/<int:pk/' ,
+        TableDetailView.as_view()
+        name = 'table-detail'
+    ),
 ]
