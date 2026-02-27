@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView,RetrieveAPIView
 from rest_framework import viewset , status
-from rest_framework import Response
+from rest_framework.response import Response
 from .models import MenuCategory , MenuItem
+from rest_framework.permission import IsAdminUser
 from .serializers import MenuCategorySerializer , MenuItemSerializer
+from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,)
 
 # Create your views here.
 
@@ -30,3 +32,11 @@ class MenuItemUpdateViewSet(viewset.ViewSet):
             return Response(serializer.data)
 
         return Response(serializer.errors,status=status.HTTP_404_BAD_REQUEST)
+
+
+class MenuItemIngredientsView(RetrieveAPIView):
+    serializer_class = IngredientSerializer
+
+    def get_queryset(self):
+        menu_item = MenuItem.objects.get(pk=self.kwargs["pk"])
+        return menu_item.ingredients.all()
