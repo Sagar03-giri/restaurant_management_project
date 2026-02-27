@@ -10,7 +10,7 @@ class MenuCategory(models.Model):
         return self.name    #i have done this in vs.code
 
 
-class Restaurent(models.Model):
+class Restaurant(models.Model):
     name = models.CharField(max_length=100)
     address = models.TextField()
     has_delivery = models.BooleanField(default=False)
@@ -23,5 +23,14 @@ class MenuItem(models.Model):
     category = models.ForeignKey(MenuCategory,on_delete=models.CASCADE)
     is_featured = models.BooleanField(default=False)
 
-    def__str__(self):
+    def __str__(self):
         return self.name
+
+class DailySpecial(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    menu_item = models.ForeignKey(MenuItem,on_delete=models.CASCADE)
+
+    def __str__(self):
+        special = DailySpecial.objects.order_by('?').first()
+        return special
