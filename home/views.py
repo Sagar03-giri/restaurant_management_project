@@ -7,7 +7,8 @@ from rest_framework.permission import IsAdminUser
 from .serializers import MenuCategorySerializer , MenuItemSerializer
 from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,)
 from rest_framework.views import ListAPIView
-
+from .models import Table
+from .serializer import TableSerializer
 # Create your views here.
 
 class MenuCategoryListView(ListAPIView):
@@ -56,3 +57,7 @@ class MenuItemsByCategoryView(APIView):
 
         serializer = MenuItemSerializer(items, many = True)
         rerurn Response (serializer.data)
+
+class TableDetailView(RetrieveAPIView):
+    queryset = Table.objects.all()
+    serializer_class = TableSerializer
