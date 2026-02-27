@@ -9,5 +9,10 @@ urlpatterns = [
         name = 'menuitem-ingredients'
 
     ),
+
+    path('menu-items-by-category/' , 
+    MenuItemsByCategoryView.as_view(),
+    name='menu-items-by-category'
+    ),
     
 ]
