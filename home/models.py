@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 
@@ -25,6 +26,12 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return self.name
+
+class DailySpecialManager(models.Model):
+    def upcomming(self):
+        today = datetime.date.today()
+        return self.filter(date__gte=today)
+        
 
 class DailySpecial(models.Model):
     name = models.CharField(max_length=100)
