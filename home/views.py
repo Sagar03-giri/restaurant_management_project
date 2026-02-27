@@ -6,6 +6,7 @@ from .models import MenuCategory , MenuItem
 from rest_framework.permission import IsAdminUser
 from .serializers import MenuCategorySerializer , MenuItemSerializer
 from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,)
+from rest_framework.views import ListAPIView
 
 # Create your views here.
 
@@ -40,3 +41,18 @@ class MenuItemIngredientsView(RetrieveAPIView):
     def get_queryset(self):
         menu_item = MenuItem.objects.get(pk=self.kwargs["pk"])
         return menu_item.ingredients.all()
+
+class MenuItemsByCategoryView(APIView):
+    def get(self,request):
+        category_name = request.query_params.get('category')
+
+        if category_name :
+            items = MenuItem.objects.filter(
+                category__name__iexact=category_name
+                )
+
+        else :
+            items = MenuItem.objects.all()
+
+        serializer = MenuItemSerializer(items, many = True)
+        rerurn Response (serializer.data)
