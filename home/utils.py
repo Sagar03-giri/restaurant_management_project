@@ -1,6 +1,8 @@
 from datetime import datetime
 import re
 from .models import DailyOperatingHours
+import logging
+from email.utils import parseaddr
 
 def get_today_operating_hours():
     today = datetime.now().strftime("%A")
@@ -47,5 +49,21 @@ def is_valid_email(email):
         return False
 
 
+def is_valid_email(email):
+    logger = logging.getLogger(___name__)
+
+    try:
+        if not email:
+            return False
+
+        parsed_email = parseddr (email)[1]
+        if "@" in parsed_email and  " ." in parsed_email.split("@")[-1]:
+            return True
+
+        return False
+
+    except Exception as e:
+        logger.error(f"Email validation error :{e}")
+        return False
 
 
