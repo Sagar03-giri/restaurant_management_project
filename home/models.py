@@ -32,5 +32,19 @@ class DailySpecial(models.Model):
     menu_item = models.ForeignKey(MenuItem,on_delete=models.CASCADE)
 
     def __str__(self):
+        return self.name
+
+    @staticmethod
+    def get_random_special:
         special = DailySpecial.objects.order_by('?').first()
-        return special
+        
+
+class NutritionalInformation(models.Model):
+    menu_item = models.ForeignKey(MenuItem,on_delete=models.CASCADE)
+    calories = models.integerField()
+    protein_grams = models.DecimalField(max_digit=5,decimal_places=2)
+    fat_grams = models.DecimalField(max_digit=5,decimal_places=2)
+    carbohydrate_grams = models.DecimalField(max_digit=5,decimal_places=2)
+
+    def __str__(self):
+        return f"{self.menu_item.name} - {self.calories} kcal"        
