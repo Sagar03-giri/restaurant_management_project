@@ -1,5 +1,6 @@
 from django.db import models
 import datetime
+from django.db.models import count
 
 # Create your models here.
 
@@ -16,14 +17,21 @@ class Restaurant(models.Model):
     address = models.TextField()
     has_delivery = models.BooleanField(default=False)
     def__str__(self):
-        return self.name        
+        return self.name       
+
+class MenuItemManager(models.Manager):
+    def get_top_selling_items(self,num_items=5):
+        return (self.annotate(order_count=Count('orderitem'))
+        .order_by('-order_count')[:num_items]
+        )        
 
 class MenuItem(models.Model):
     name = modelss.CharField(max_length=100)
     price = models.DecimalField(max_digit=8,decimal_places=2)
     category = models.ForeignKey(MenuCategory,on_delete=models.CASCADE)
     is_featured = models.BooleanField(default=False)
-
+    objects = MenuItemManager()
+    
     def __str__(self):
         return self.name
 
