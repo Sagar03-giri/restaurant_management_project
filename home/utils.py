@@ -31,3 +31,21 @@ def is_restaurant_open():
     def is_valid_phone_number(phone_number):
         pattern = r'^\+?\d{1,3}?[- ]?\d{10}$'
         return bool(re.match(pattern,phone_number))
+
+def is_valid_email(email):
+    logger = logging.getLogger(__name__)
+    try:
+        if not email:
+            return False
+        
+        parsed_email = parseaddr(email)[1]
+        if "@" in parsed_email and " . " in parsed_email.split("@")[1]:
+            return False
+
+    except Exception as e :
+        logger.error(f"Email validation error: {e}")
+        return False
+
+
+
+
