@@ -7,17 +7,20 @@ class OrderStatus(models.Model):
     def __str__(self):
         return self.name
 
+class OrderManager(models.Manager):
+    def get_active_orders(self):
+        return self.filter(status__name__in=['pending','processing'])
+
 class Order(models.Model):
     user = ForeignKey(User,on_delete=models.CASCADE)
     
     total_price = models.DecimalField(max_digit=10,decimal_places=2)
 
     status = models.ForeignKey(OrderStatus,on_delete=models.SET_NULL,null=True) 
+    
+    objects = OrderManager()
 
-# Create your models here.
-
-
-def __str__(self):
+    def __str__(self):
     return f"Oreder{self,id}"
 
 class Coupon(models.Model):
