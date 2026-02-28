@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
 from .models import Coupon
-
+from rest_framework.generics import RetrieveAPIView
+from oreders.model import Oreders
+from home.serializers import OrderSerializer
 
 class CouponValidatonView(APIView):
     def post(self,request):
@@ -37,3 +39,7 @@ class CouponValidatonView(APIView):
             "success":True,
             "discount_percentage":coupon.discount_percentage
         })    
+
+class OrderDetailView(RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializers_class = OrderSerializer
