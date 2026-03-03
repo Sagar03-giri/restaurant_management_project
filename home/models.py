@@ -1,6 +1,6 @@
 from django.db import models
 import datetime
-from django.db.models import count
+from django.db.models import Count
 
 # Create your models here.
 
@@ -16,7 +16,11 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=100)
     address = models.TextField()
     has_delivery = models.BooleanField(default=False)
-    def__str__(self):
+    operating_days = models.CharField(
+        max_length=100,
+        help_text="comma-saparated days like Mon,Tue,Wed"
+        )
+    def __str__(self):
         return self.name       
 
 class MenuItemManager(models.Manager):
@@ -26,8 +30,8 @@ class MenuItemManager(models.Manager):
         )        
 
 class MenuItem(models.Model):
-    name = modelss.CharField(max_length=100)
-    price = models.DecimalField(max_digit=8,decimal_places=2)
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=8,decimal_places=2)
     category = models.ForeignKey(MenuCategory,on_delete=models.CASCADE)
     is_featured = models.BooleanField(default=False)
     objects = MenuItemManager()
@@ -35,8 +39,8 @@ class MenuItem(models.Model):
     def __str__(self):
         return self.name
 
-class DailySpecialManager(models.Model):
-    def upcomming(self):
+class DailySpecialManager(models.Manager):
+    def upcoming(self):
         today = datetime.date.today()
         return self.filter(date__gte=today)
         
@@ -50,7 +54,7 @@ class DailySpecial(models.Model):
         return self.name
 
     @staticmethod
-    def get_random_special:
+    def get_random_special():
         special = DailySpecial.objects.order_by('?').first()
         
 
