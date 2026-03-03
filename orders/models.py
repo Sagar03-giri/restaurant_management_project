@@ -12,7 +12,7 @@ class OrderManager(models.Manager):
         return self.filter(status__name__in=['pending','processing'])
 
 class Order(models.Model):
-    user = ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
 
@@ -38,3 +38,13 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+
+class LoyaltyProgram(models.Model):
+    name = models.CharField(max_length=50,unique=True)
+    points_required = models.IntegerField(unique=True)
+    discount_percentage = models.DecimalField(max_digits=5,decimal_places=2)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
