@@ -27,7 +27,7 @@ class Order(models.Model):
         return list(unique_names)
 
     def __str__(self):
-    return f"Order{self,id}"
+        return f"Order{self.id}"
 
 class Coupon(models.Model):
     code = models.CharField(max_length=50,unique=True)
