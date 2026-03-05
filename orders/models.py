@@ -13,6 +13,9 @@ class OrderManager(models.Manager):
     def get_active_orders(self):
         return self.filter(status__name__in=['pending','processing'])
 
+    def by_status(self, status_name):
+        return self.filter(status__name__iexact=status_name)
+
 class Order(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     
@@ -38,7 +41,7 @@ class Order(models.Model):
         return f"Order{self.id}"
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(order,on_delete=models.CASCADE)
+    Order = models.ForeignKey(order,on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem,on_delete=models.CASCADE)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=10,decimal_places=2)
