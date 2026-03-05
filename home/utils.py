@@ -3,6 +3,8 @@ import re
 from .models import DailyOperatingHours
 import logging
 from email.utils import parseaddr
+from django.core.mail import send_mail
+from django.conf import settings
 
 def get_today_operating_hours():
     today = datetime.now().strftime("%A")
@@ -56,3 +58,19 @@ def is_valid_email(email):
         return False
 
 
+logger = logging.getLogger(__name__)
+
+def send_mail(recipient_email, subject, message):
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [recipient_email],
+            fail_silently=False
+        )
+        return True
+
+    except Exception as e:
+        logger.error(f"Email sending failed:{e}")
+        return False
