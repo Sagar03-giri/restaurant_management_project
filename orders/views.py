@@ -7,10 +7,10 @@ from rest_framework import status
 from django.utils.timezone import now
 from .models import Coupon
 from rest_framework.generics import RetrieveAPIView
-from oreders.model import Oreders
+from orders.models import Order
 from home.serializers import OrderSerializer
 
-class CouponValidatonView(APIView):
+class CouponValidationView(APIView):
     def post(self,request):
         code = request.data.get("code")
 
@@ -21,7 +21,7 @@ class CouponValidatonView(APIView):
             )
         
         try:
-            coupon = Coupon.object.get(code=code)
+            coupon = Coupon.objects.get(code=code)
         except Coupon.DoesNotExist:
             return Response( 
                 {"error":"invalid coupon"},
@@ -29,7 +29,7 @@ class CouponValidatonView(APIView):
             )    
         today = now().date()
 
-        if not coupon.is_active or not(coupon.valid_form <= today <=coupon.valid_until):
+        if not coupon.is_active or not(coupon.valid_from <= today <=coupon.valid_until):
             return Response(
                 {"error":"coupon expired or invalid"
                 },
@@ -42,4 +42,30 @@ class CouponValidatonView(APIView):
 
 class OrderDetailView(RetrieveAPIView):
     queryset = Order.objects.all()
-    serializers_class = OrderSerializer
+    serializer_class = OrderSerializer
+
+class UpdateOrderStatusAPIView(APIView):
+    def put(self, request):
+        serializer = OrderUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            order_id = serializer.validate_data["order_id"]
+            status_name = serializer.validate_data["status"]
+
+            try:
+                order = Order.objects.get(id=order_id)
+
+            except Order.DoesNotExist:
+                return Response(
+                    {"error":"Order not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            order_status = OrderStatus.objects.get(name__iexact=status_name)
+            order.status=order_status
+            order.save()
+            
+            return Response(
+                {"message":"Order status updated successfully"},
+                status=status.HTTP_200_OK
+            )
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
