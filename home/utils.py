@@ -74,3 +74,14 @@ def send_mail(recipient_email, subject, message):
     except Exception as e:
         logger.error(f"Email sending failed:{e}")
         return False
+
+
+def format_datetime(dt):
+    if not dt:
+        return ""
+
+    try:
+        return dt.strftime("%B %d, %Y at %I:%M %p")
+
+    except Exception:
+        return ""
