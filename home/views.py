@@ -1,13 +1,13 @@
 from django.shortcuts import render
-from rest_framework.generics import ListAPIView,RetrieveAPIView
+from rest_framework.generics import ListAPIView,RetrieveAPIView,CreateAPIView
 from rest_framework import viewsets , status
 from rest_framework.response import Response
 from .models import MenuCategory , MenuItem
 from rest_framework.permissions import IsAdminUser
 #from .serializers import MenuCategorySerializer , MenuItemSerializer
-from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,TableSerializer)
+from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,TableSerializer,ContactFormSubmissionSerializer)
 from rest_framework.generics import ListAPIView
-from .models import Table
+from .models import Table,ContactFormSubmission
 #from .serializers import TableSerializer
 from rest_framework.views import APIView
 # Create your views here.
@@ -68,3 +68,7 @@ class AvailableTableAPIView(ListAPIView):
 
     def get_queryset(self):
         return Table.objects.filter(is_available=True)
+
+class ContactFormSubmissionView(CreateAPIView):
+    queryset = ContactFormSubmission.objects.all()
+    serializer_class = ContactFormSubmissionSerializer
