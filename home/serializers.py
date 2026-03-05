@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import MenuCategory, MenuItem,Ingredient,Table
 from orders.models import Order
+from orders.models import OrderStatus
 #from .models import Table
 
 class MenuCategorySerializer(serializers.ModelSerializer):
@@ -38,3 +39,13 @@ class ContatFormSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContatFormSubmission
         fields = '__all__'
+
+class OrderStatusUpdateSerializer(serializers.Serializer):
+    order_id = serializers.IntegerField()
+    status = serializers.CharField()
+
+    def validate_status(self, value):
+        if not OrderStatus.objects.filter(name__iexact=value).exist():
+            raise serializers.ValidationError("Invalid status provided.")
+
+        return value
