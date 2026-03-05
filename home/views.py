@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAdminUser
 from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,TableSerializer,ContactFormSubmissionSerializer)
 from rest_framework.generics import ListAPIView
 from .models import Table,ContactFormSubmission
+from .utils import send_email
 #from .serializers import TableSerializer
 from rest_framework.views import APIView
 # Create your views here.
@@ -72,3 +73,12 @@ class AvailableTableAPIView(ListAPIView):
 class ContactFormSubmissionView(CreateAPIView):
     queryset = ContactFormSubmission.objects.all()
     serializer_class = ContactFormSubmissionSerializer
+
+    def perform_create(self,serializer):
+        contact = serializer.save()
+
+        send_email(
+            contact.email, "Contact Form Recieved",
+            f"Hello {contact.name},\n\nThank you for contacting us. We have recieved your message and will get back to you soon .\n\nMessage:\n{contact.message}"
+        )
+    
