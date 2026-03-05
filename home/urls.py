@@ -29,4 +29,9 @@ urlpatterns = [
         name = 'available_tables_api'
 
     ),
+
+    path(
+        'contact/' , 
+        ContactFormSubmissionView.as_View(),
+        name='contact-form'),
 ]
