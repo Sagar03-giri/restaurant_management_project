@@ -33,3 +33,8 @@ class TableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Table
         fields = ['table_number','capacity','is_available']
+
+class ContatFormSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContatFormSubmission
+        fields = '__all__'
