@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import MenuCategory, MenuItem,Ingredient,Table
 from orders.models import Order
 from orders.models import OrderStatus
+from orders.models import PaymentMethod
 #from .models import Table
 
 class MenuCategorySerializer(serializers.ModelSerializer):
@@ -49,3 +50,8 @@ class OrderStatusUpdateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid status provided.")
 
         return value
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = '__all__'
