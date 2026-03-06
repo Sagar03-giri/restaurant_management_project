@@ -7,7 +7,7 @@ from rest_framework import status
 from django.utils.timezone import now
 from .models import Coupon
 from rest_framework.generics import RetrieveAPIView
-from orders.models import Order
+from orders.models import Order , OrderStatus
 from home.serializers import OrderSerializer
 from rest_framework.generics import ListAPIView
 from .models import PaymentMethod
@@ -78,3 +78,35 @@ class PaymentMethodListAPIView(ListAPIView):
 
     def get_queryset(self):
         return PaymentMethod.objects.filter(is_active=True)
+
+class CancelOrderApiView(APIView):
+    def delete(self, request, order_id):
+        try:
+            order = Order.objects.get(id=order_id):
+        except Order.DoesNotExist:
+            return Response(
+                {"error":"order not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if order.user != request.user:
+            return Response(
+                {"error":"you are not allowed to cancel this order},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        try:
+            cancelled_status = OrderStatus.objects.get(name__iexact="cancelled")
+        except OrderStatus.DoesNotExist:
+            return Response(
+                {"error":"Cancel status not configured"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        order.status = cancelled_status
+        order.save()
+
+        return Response(
+            {"message":"Order cancelled successfully"},
+            status=status.HTTP_200_OK
+        )
