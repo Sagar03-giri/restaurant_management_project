@@ -34,4 +34,10 @@ urlpatterns = [
         'contact/' , 
         ContactFormSubmissionView.as_View(),
         name='contact-form'),
+
+    path(
+        ('daily-specials/' ,
+        DailySpecialListAPIView.as_View(), name='daily-specials'
+        
+    ),
 ]
