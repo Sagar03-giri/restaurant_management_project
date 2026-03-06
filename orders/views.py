@@ -110,3 +110,37 @@ class CancelOrderApiView(APIView):
             {"message":"Order cancelled successfully"},
             status=status.HTTP_200_OK
         )
+
+class UpdateOrderStatusAPIView(APIView):
+    def post(self, request):
+        order_id = request.data.get("order_id")
+        new_status = request.data.get("status")
+
+        if not order_id or not new_status:
+            return Response(
+                {"error":"order_id and status are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            return Response(
+                {"error":"Order not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            status_obj = OrderStatus.objects.get(name__iexact=new_status)
+        except OrderStatus.DoesNotExist:
+            return Response(
+                {"error":"invalid status provided"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        order.status = status_obj
+        order.save()
+
+        return Response(
+            {"message":"Order status updated successfully"},
+            status=status.HTTP_200_OK
+        )
