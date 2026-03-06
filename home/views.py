@@ -11,6 +11,7 @@ from .models import Table,ContactFormSubmission
 from .utils import send_email
 #from .serializers import TableSerializer
 from rest_framework.views import APIView
+from .serializer import DailySpecialSerializer
 # Create your views here.
 
 class MenuCategoryListView(ListAPIView):
@@ -82,3 +83,8 @@ class ContactFormSubmissionView(CreateAPIView):
             f"Hello {contact.name},\n\nThank you for contacting us. We have recieved your message and will get back to you soon .\n\nMessage:\n{contact.message}"
         )
     
+class DailySpecialListAPIView(ListAPIView):
+    serializer_class = DailySpecialSerializer
+
+    def get_queryset(self):
+        return MenuItem.objects.filter(is_daily_special=True)
