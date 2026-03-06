@@ -69,3 +69,9 @@ class UpdateOrderStatusAPIView(APIView):
                 status=status.HTTP_200_OK
             )
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+class PaymentMethodListAPIView(ListAPIView):
+    serializer_class = PaymentMethodSerializer
+
+    def get_queryset(self):
+        return PaymentMethod.objects.filter(is_active=True)
