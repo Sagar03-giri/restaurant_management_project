@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from decimal import Decimal
 from home.models import MenuItem
+from .utils import calculate_discount
 
 class OrderStatus(models.Model):
     name = models.CharField(max_length=50,unique=True)
@@ -28,8 +29,12 @@ class Order(models.Model):
     def calculate_total(self):
         total = Decimal("0.00")
         for item in self.orderitem_set.all():
-            total += item.price*item.quantity
+            item_total = item.price * item.quantity
+            item_total = calculate_discount(item_total)
+            total += item_total
+        
         return total
+        
 
     def get_unique_item_names(self):
         unique_names = set()
