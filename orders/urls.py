@@ -27,4 +27,10 @@ urlpatterns = [
         CancelOrderAPIView.as_view(),
         name="cancel-order"
     ),
+
+    path(
+        "update-order-status/",
+        UpdateOrderStatusAPIView.as_view(),
+        name="update-order-status"
+    ),
 ]
