@@ -88,3 +88,7 @@ class DailySpecialListAPIView(ListAPIView):
 
     def get_queryset(self):
         return MenuItem.objects.filter(is_daily_special=True)
+
+class MenuCategoryViewSet(viewsets.ModelViewset):
+    queryset = MenuCategory.objects.all()
+    serializer_class = MenuCategorySerializer
