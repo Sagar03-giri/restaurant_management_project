@@ -33,6 +33,7 @@ class MenuItem(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=8,decimal_places=2)
     category = models.ForeignKey(MenuCategory,on_delete=models.CASCADE)
+    is_daily_special = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
     objects = MenuItemManager()
     
