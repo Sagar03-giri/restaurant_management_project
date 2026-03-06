@@ -8,7 +8,7 @@ from orders.models import PaymentMethod
 class MenuCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuCategory
-        fields = ['name']
+        fields = '__all__'
 
 class  MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,3 +55,8 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentMethod
         fields = '__all__'
+
+class DailySpecialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuItem
+        fields = ['id' , 'name', 'price', 'category']
