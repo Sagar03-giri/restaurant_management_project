@@ -5,6 +5,7 @@ import logging
 from email.utils import parseaddr
 from django.core.mail import send_mail
 from django.conf import settings
+from .models import MenuItem
 
 def get_today_operating_hours():
     today = datetime.now().strftime("%A")
@@ -85,3 +86,9 @@ def format_datetime(dt):
 
     except Exception:
         return ""
+
+def get_distinct_cuisines():
+    cuisines = MenuItem.objects.values_list(
+        'cuisine__name' , flat=True
+    ).distinct()
+    return list(cuisines)
