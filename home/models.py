@@ -76,3 +76,13 @@ class ContractFormSubmission(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.email}"
+
+class UserReview(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    rating = models.integerField()
+    comment = models.TextField(blank=True , null =True)
+    created_at = models.datetimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.menu_item} ({self.rating})"
