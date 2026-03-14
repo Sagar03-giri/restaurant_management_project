@@ -92,3 +92,14 @@ class DailySpecialListAPIView(ListAPIView):
 class MenuCategoryViewSet(viewsets.ModelViewset):
     queryset = MenuCategory.objects.all()
     serializer_class = MenuCategorySerializer
+
+class CreateReviewAPIView(CreateAPIView):
+    queryset = UserReview.objects.all()
+    serializer_class = UserReviewSeializer
+
+class MenuItemReviewListAPIView(ListAPIView):
+    serializer_class = UserReviewSeializer
+
+    def get_queryset(self):
+        menu_item_id = self.kwargs.get("menu_item_id")
+        return UserReview.objects.filter(menu_item_id=menu_item_id)
