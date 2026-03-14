@@ -40,4 +40,12 @@ urlpatterns = [
         DailySpecialListAPIView.as_View(), name='daily-specials'
         
     ),
+    path(
+        'review/create/' , CreateReviewAPIView(), name = 'create-review'
+    ),
+    path(
+        'review/menu-item/<int:menu_item_id>/' ,
+        MenuItemReviewListAPIView.as_view(),
+        name = 'menu-item-reviews'
+    ),
 ]
