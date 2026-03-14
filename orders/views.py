@@ -144,3 +144,17 @@ class UpdateOrderStatusAPIView(APIView):
             {"message":"Order status updated successfully"},
             status=status.HTTP_200_OK
         )
+
+@api_view(['GET'])
+def get_order_status(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id):
+    except Order.DoesNotExist:
+        return Response(
+            {"error":"Order not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    return Response({
+        "order_id":order.id, 
+        "status": order.status.name if order.status else None
+    })
