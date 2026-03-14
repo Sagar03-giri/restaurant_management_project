@@ -1,8 +1,12 @@
 import string
 import secrets 
+import logging
 from decimal import Decimal, ROUND_HALF_UP
 from django.db.models import Sum
 from .models import Coupon, Order
+from .models import Order, OrderStatus
+
+logger = logging.getLogger(__name__)
 
 def generate_coupon_code(length=10):
 
@@ -32,3 +36,25 @@ def calculate_tip_amount(order_total, tip_percentage):
     order_total = Decimal(order_total)
     tip = order_total * (Decimal(tip_percentage) / Decimal(100))
     return tip.quantize(Decimal("0.01"), rounding = ROUND_HALF_UP)
+
+def update_order_status(order_id, new_status):
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        logger.error(f"Order with ID {order_id} not found.")
+        return {"error":"Order not found"}
+
+    try :
+        status_obj = OrderStatus.objects.get(name__iexact=new_status)
+    except Orderstatus.DoesNotExist:
+        logger.error(f"Invalid status provided:{new_status}")
+
+            return {"error":"Invalid status provided"}
+
+        Old_status = order.status.name if order.status else None
+
+        order.status = status_obj
+        order.save()
+
+        logger.info(f"Order {order_id} status changed from '{old_status} ' to ' {new_status}' . ")
+        return {"message":"Order status updated successfully"}
