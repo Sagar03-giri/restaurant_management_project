@@ -6,6 +6,10 @@ from .views import PaymentMethodListAPIView
 from .views import CancelOrderAPIView
 urlpatterns = [
     path(
+        'order-status/<int:order_id>/',
+        get_order_status,name='order-status'
+    ),
+    path(
         'coupons/validate/',CouponValidationView.as_view(),name='validate-coupon'
         ),
     
