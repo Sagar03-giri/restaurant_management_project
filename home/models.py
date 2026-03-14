@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 from django.db.models import Count
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -83,6 +84,16 @@ class UserReview(models.Model):
     rating = models.integerField()
     comment = models.TextField(blank=True , null =True)
     created_at = models.datetimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.menu_item} ({self.rating})"
+
+class UserReview(models.model):
+    user = models.ForeignKey(User , on_delete=models.CASCADE)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    rating = models.integerField()
+    comment = models.TextField(blank=True , null=True)
+    review_date = models.datetimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} - {self.menu_item} ({self.rating})"
