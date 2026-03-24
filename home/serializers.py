@@ -3,6 +3,7 @@ from .models import MenuCategory, MenuItem,Ingredient,Table
 from orders.models import Order
 from orders.models import OrderStatus
 from orders.models import PaymentMethod
+from .models import Restaurant
 #from .models import Table
 
 class MenuCategorySerializer(serializers.ModelSerializer):
@@ -69,3 +70,8 @@ class UserReviewSerializer(serializers.ModelSerializer):
             if value < 1 or value > 5:
                 raise serializers.ValidationError("Rating must be between 1 and 5")
             return value
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restaurant
+        fields = '__all__'
