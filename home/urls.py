@@ -59,4 +59,9 @@ urlpatterns = [
     path(
         'restaurant-info/' , RestaurantInfoAPIView.as_View(),'restaurant-info'
     ),
+
+    path(
+        'menu-items/<int:item_id>/availability/',
+        update_menu_item_availability
+    ),
 ]
