@@ -103,3 +103,10 @@ class MenuItemReviewListAPIView(ListAPIView):
     def get_queryset(self):
         menu_item_id = self.kwargs.get("menu_item_id")
         return UserReview.objects.filter(menu_item_id=menu_item_id)
+
+
+class RestaurantInfoAPIView(APIView):
+    def get(self, request):
+        resturant = Restaurant.objects.first()
+        serializer = RestaurantSerializer(restaurant)
+        return Response(serializer.data)
