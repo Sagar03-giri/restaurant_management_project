@@ -2,8 +2,38 @@ from django.db import models
 import datetime
 from django.db.models import Count
 from django.contrib.auth.models import User
+from datetime import timedelta
 
 # Create your models here.
+
+class Reservation(models.Model):
+    custmer_name = models.CharField(max_length = 100)
+    reservation_time = models.datetimeField()
+    duration = models.IntegerField(default=60)
+
+    def __str__(self):
+        return f"{self.customer_name} - {self.reservation_time}"
+
+    @staticmethod
+    def get_available_slots(start_time, end_time , slot_duration=60):
+        available_slots = []
+        current_time = start_time
+
+        while current_time < end_time:
+            slot_end = current_time + timedelta(minutes=slot_duration)
+
+            conflict = Reservation.objects.filter(
+                reservation_time__lt=slot_end,
+                reservation_time__gte=current_time
+            ).exists()
+
+            if not conflict:
+                available_slots.append((current_time , end_time))
+
+            current_time += timedelta(minutes=slot_duration)
+
+        return available_slots
+
 
 
 class MenuCategory(models.Model):
@@ -63,7 +93,7 @@ class DailySpecial(models.Model):
 
 class NutritionalInformation(models.Model):
     menu_item = models.ForeignKey(MenuItem,on_delete=models.CASCADE)
-    calories = models.integerField()
+    calories = models.IntegerField()
     protein_grams = models.DecimalField(max_digit=5,decimal_places=2)
     fat_grams = models.DecimalField(max_digit=5,decimal_places=2)
     carbohydrate_grams = models.DecimalField(max_digit=5,decimal_places=2)
@@ -79,15 +109,7 @@ class ContractFormSubmission(models.Model):
     def __str__(self):
         return f"{self.name} - {self.email}"
 
-class UserReview(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    rating = models.integerField()
-    comment = models.TextField(blank=True , null =True)
-    created_at = models.datetimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.user} - {self.menu_item} ({self.rating})"
 
 class UserReview(models.model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
