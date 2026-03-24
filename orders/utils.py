@@ -8,6 +8,21 @@ from .models import Order, OrderStatus
 
 logger = logging.getLogger(__name__)
 
+def calculate_order_total(order_items):
+    if not order_items:
+        return Decimal("0.00")
+    total = Decimal("0.00")
+
+    for item in order_items:
+        price = Decimal(item.get("price",0))
+        quantity = int(item.get("quantity",0))
+
+        if price < 0 or quantity <0:
+            continue
+        total += price * quantity
+    return total
+
+
 def generate_coupon_code(length=10):
 
     characters = string.ascii_uppercase + string.digits
