@@ -55,4 +55,8 @@ urlpatterns = [
         MenuItemReviewListAPIView.as_view(),
         name = 'menu-item-reviews'
     ),
+
+    path(
+        'restaurant-info/' , RestaurantInfoAPIView.as_View(),'restaurant-info'
+    ),
 ]
