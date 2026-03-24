@@ -14,6 +14,39 @@ from rest_framework.views import APIView
 from .serializer import DailySpecialSerializer
 # Create your views here.
 
+@api_view(['POST'])
+def_update_menu_item_availability(request, item_id):
+    try:
+        item = MenuItem.objects.get(id=item_id)
+
+    except MenuItem.DoesNotExist:
+        return Response( 
+            {"error" : "Menu item not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    is_available = request.data.get("is_available")
+    if is_available is None:
+        return Response(
+            {"error": "is_available field is required"},
+            status=status.HTTP_404_BAD_REQUEST
+        )
+
+    if not isinstance(is_available, bool):
+        return Response(
+            {"error":"is_available must be true or false"},
+            status=status.HTTP_404_BAD_REQUEST
+        )
+
+    item.is_available = is_available
+    item.save()
+
+    return Response({
+        "message":"Menu item availability updated successfully",
+        "item_id":item.id,
+        "is_available": item.is_available
+    })
+
 class MenuCategoryListView(ListAPIView):
     queryset = MenuCategory.objects.all()
     serializer_class = MenuCategorySerializer
