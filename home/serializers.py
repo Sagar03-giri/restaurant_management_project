@@ -1,15 +1,13 @@
 from rest_framework import serializers
-from .models import MenuCategory, MenuItem,Ingredient,Table
+from .models import MenuCategory, MenuItem,ingredient
 from orders.models import Order
-from orders.models import OrderStatus
-from orders.models import PaymentMethod
-from .models import Restaurant
-#from .models import Table
+from .models import Table 
+from .models import Restaurant , DailyOperatingHours
 
 class MenuCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuCategory
-        fields = '__all__'
+        fields = ['name']
 
 class  MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,12 +17,12 @@ class  MenuItemSerializer(serializers.ModelSerializer):
     def validate_price(self,value):
         if value <= 0 :
             raise serializers.ValidationError("price must be positive.")
-        return value
+        resturn value
 
 
-class IngredientSerializer(serializers.ModelSerializer):
+class ingredientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Ingredient
+        model = ingredient
         fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -37,41 +35,24 @@ class TableSerializer(serializers.ModelSerializer):
         model = Table
         fields = ['table_number','capacity','is_available']
 
-class ContatFormSubmissionSerializer(serializers.ModelSerializer):
+class DailyOperatingHoursSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ContatFormSubmission
-        fields = '__all__'
-
-class OrderStatusUpdateSerializer(serializers.Serializer):
-    order_id = serializers.IntegerField()
-    status = serializers.CharField()
-
-    def validate_status(self, value):
-        if not OrderStatus.objects.filter(name__iexact=value).exist():
-            raise serializers.ValidationError("Invalid status provided.")
-
-        return value
-
-class PaymentMethodSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaymentMethod
-        fields = '__all__'
-
-class DailySpecialSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MenuItem
-        fields = ['id' , 'name', 'price', 'category']
-
-class UserReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserReview
-        fields = ['id' , 'user' , 'menu_item' , 'rating' , 'comment' , 'created_at']
-        def validate_rating(self , value):
-            if value < 1 or value > 5:
-                raise serializers.ValidationError("Rating must be between 1 and 5")
-            return value
+        model = DailyOperatingHours
+        fields = ['day' , 'open_time ', 'close_time']
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    operating_hours = DailyOperatingHoursSerializer(many=True ,
+    source='dailyoperatinghours_set'
+    )
+
     class Meta:
         model = Restaurant
-        fields = '__all__'
+        fields = [
+            'id',
+            'name',
+            'address',
+            'has_delivery',
+            'operating_days',
+            'operating_hours'
+        ]
+
