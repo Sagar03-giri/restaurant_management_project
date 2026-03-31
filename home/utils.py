@@ -1,11 +1,9 @@
-from datetime import datetime,time
+from datetime import datetime
 import re
 from .models import DailyOperatingHours
 import logging
 from email.utils import parseaddr
-from django.core.mail import send_mail
-from django.conf import settings
-from .models import MenuItem
+from decimal import Decimal , InvalidOperation
 
 def get_today_operating_hours():
     today = datetime.now().strftime("%A")
@@ -19,7 +17,7 @@ def get_today_operating_hours():
 
 def is_restaurant_open():
     now = datetime.now()
-    current_time = now.time()
+    current_timee = now.time()
     current_day = now.weekday()
 
     if current_day <= 4:
@@ -33,18 +31,18 @@ def is_restaurant_open():
     return open_time <= current_time <= close_time
 
 
-def is_valid_phone_number(phone_number):
+    def is_valid_phone_number(phone_number):
         pattern = r'^\+?\d{1,3}?[- ]?\d{10}$'
         return bool(re.match(pattern,phone_number))
 
 def is_valid_email(email):
-    logger = logging.getLogger(___name___)
+    logger = logging.getLogger(__name__)
     try:
         if not email:
             return False
         
         parsed_email = parseaddr(email)[1]
-        if "@" in parsed_email and "." in parsed_email.split("@")[1]:
+        if "@" in parsed_email and " . " in parsed_email.split("@")[1]:
             return False
 
     except Exception as e :
@@ -52,43 +50,38 @@ def is_valid_email(email):
         return False
 
 
+def is_valid_email(email):
+    logger = logging.getLogger(___name__)
 
+    try:
+        if not email:
+            return False
+
+        parsed_email = parseddr (email)[1]
+        if "@" in parsed_email and  " ." in parsed_email.split("@")[-1]:
+            return True
+
+        return False
 
     except Exception as e:
         logger.error(f"Email validation error :{e}")
         return False
 
-
-logger = logging.getLogger(__name__)
-
-def send_mail(recipient_email, subject, message):
+def calculate_discount(original_price , discount_percentage):
     try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [recipient_email],
-            fail_silently=False
-        )
-        return True
+        price = Decimal(original_price)
+        discount = Decimal(discount_percentage)
 
-    except Exception as e:
-        logger.error(f"Email sending failed:{e}")
-        return False
+        if price < 0 or discount < 0:
+            return None
 
+        if discount > 100:
+            return None
 
-def format_datetime(dt):
-    if not dt:
-        return ""
+        discount_amount = (price * discount) / Decimal("100")
+        final_price = price - discount_amount
 
-    try:
-        return dt.strftime("%B %d, %Y at %I:%M %p")
+        return final_price.quantize(Decimal("0.01"))
 
-    except Exception:
-        return ""
-
-def get_distinct_cuisines():
-    cuisines = MenuItem.objects.values_list(
-        'cuisine__name' , flat=True
-    ).distinct()
-    return list(cuisines)
+    except (InvalidOperation, TypeError, ValueError):
+        return None
