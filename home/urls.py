@@ -1,14 +1,7 @@
-from django.urls import path,include
-from rest_framework.routers import DefaultRouter
-from .views import MenuCategoryViewSet
-
-router = DefaultRouter()
-router.register(r'menu-categories' , MenuCategoryViewSet)
+from django.urls import path
+from .views import *
 
 urlpatterns = [
-    path(
-        '' , include(router.urls)
-    ),
     path(
         'menu-categories/',MenuCategoryListView.as_view(),
         name='menu-categories'),
@@ -37,31 +30,6 @@ urlpatterns = [
 
     ),
 
-    path(
-        'contact/' , 
-        ContactFormSubmissionView.as_View(),
-        name='contact-form'),
-
-    path(
-        ('daily-specials/' ,
-        DailySpecialListAPIView.as_View(), name='daily-specials'
-        
-    ),
-    path(
-        'review/create/' , CreateReviewAPIView(), name = 'create-review'
-    ),
-    path(
-        'review/menu-item/<int:menu_item_id>/' ,
-        MenuItemReviewListAPIView.as_view(),
-        name = 'menu-item-reviews'
-    ),
-
-    path(
-        'restaurant-info/' , RestaurantInfoAPIView.as_View(),'restaurant-info'
-    ),
-
-    path(
-        'menu-items/<int:item_id>/availability/',
-        update_menu_item_availability
-    ),
+    path('review/create/',UserReviewAPIView.as_view(), name='create-review'),
+    
 ]
