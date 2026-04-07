@@ -28,10 +28,29 @@ class MenuItemManager(models.Manager):
 class MenuItem(models.Model):
     name = modelss.CharField(max_length=100)
     price = models.DecimalField(max_digit=8,decimal_places=2)
+    discount_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        help_text="Discount percentage (0-100)"
+    )
     category = models.ForeignKey(MenuCategory,on_delete=models.CASCADE)
+    is_daily_special = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
     objects = MenuItemManager()
+
+    def get_final_price(self):
+
+        if self.discount_percentage < 0 or self.discount_percentage > 100:
+            return float(self.price)
+
+        discount_amount = (self.price * self.discount_percentage) / 100
+        final_price = self.price - discount_amount
+
+        return float(round(final_price, 2))
     
+
+
     def __str__(self):
         return self.name
 
