@@ -1,58 +1,22 @@
 from django.shortcuts import render
-from rest_framework.generics import ListAPIView,RetrieveAPIView,CreateAPIView
-from rest_framework import viewsets , status
+from rest_framework.generics import ListAPIView,RetrieveAPIView
+from rest_framework import viewset , status
 from rest_framework.response import Response
 from .models import MenuCategory , MenuItem
-from rest_framework.permissions import IsAdminUser
-#from .serializers import MenuCategorySerializer , MenuItemSerializer
-from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,TableSerializer,ContactFormSubmissionSerializer)
-from rest_framework.generics import ListAPIView
-from .models import Table,ContactFormSubmission
-from .utils import send_email
-#from .serializers import TableSerializer
-from rest_framework.views import APIView
-from .serializer import DailySpecialSerializer
+from rest_framework.permission import IsAdminUser
+from .serializers import MenuCategorySerializer , MenuItemSerializer
+from .serializers import (MenuCategorySerializer,MenuItemSerializer,IngredientSerializer,)
+from rest_framework.views import ListAPIView
+from .models import Table
+from .serializer import TableSerializer
 # Create your views here.
-
-@api_view(['POST'])
-def_update_menu_item_availability(request, item_id):
-    try:
-        item = MenuItem.objects.get(id=item_id)
-
-    except MenuItem.DoesNotExist:
-        return Response( 
-            {"error" : "Menu item not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-    is_available = request.data.get("is_available")
-    if is_available is None:
-        return Response(
-            {"error": "is_available field is required"},
-            status=status.HTTP_404_BAD_REQUEST
-        )
-
-    if not isinstance(is_available, bool):
-        return Response(
-            {"error":"is_available must be true or false"},
-            status=status.HTTP_404_BAD_REQUEST
-        )
-
-    item.is_available = is_available
-    item.save()
-
-    return Response({
-        "message":"Menu item availability updated successfully",
-        "item_id":item.id,
-        "is_available": item.is_available
-    })
 
 class MenuCategoryListView(ListAPIView):
     queryset = MenuCategory.objects.all()
     serializer_class = MenuCategorySerializer
 
 
-class MenuItemUpdateViewSet(viewsets.ViewSet):
+class MenuItemUpdateViewSet(viewset.ViewSet):
     permission_classes = [IsAdminUser]
 
     def update(self , request ,pk=None):
@@ -92,7 +56,7 @@ class MenuItemsByCategoryView(APIView):
             items = MenuItem.objects.all()
 
         serializer = MenuItemSerializer(items, many = True)
-        return Response (serializer.data)
+        rerurn Response (serializer.data)
 
 class TableDetailView(RetrieveAPIView):
     queryset = Table.objects.all()
@@ -104,42 +68,20 @@ class AvailableTableAPIView(ListAPIView):
     def get_queryset(self):
         return Table.objects.filter(is_available=True)
 
-class ContactFormSubmissionView(CreateAPIView):
-    queryset = ContactFormSubmission.objects.all()
-    serializer_class = ContactFormSubmissionSerializer
-
-    def perform_create(self,serializer):
-        contact = serializer.save()
-
-        send_email(
-            contact.email, "Contact Form Recieved",
-            f"Hello {contact.name},\n\nThank you for contacting us. We have recieved your message and will get back to you soon .\n\nMessage:\n{contact.message}"
-        )
-    
-class DailySpecialListAPIView(ListAPIView):
-    serializer_class = DailySpecialSerializer
-
-    def get_queryset(self):
-        return MenuItem.objects.filter(is_daily_special=True)
-
-class MenuCategoryViewSet(viewsets.ModelViewset):
-    queryset = MenuCategory.objects.all()
-    serializer_class = MenuCategorySerializer
-
-class CreateReviewAPIView(CreateAPIView):
+class UserReviewCreateAPIView(CreateAPIView):
     queryset = UserReview.objects.all()
-    serializer_class = UserReviewSeializer
+    serializer_class = UserReviewSerializer
 
-class MenuItemReviewListAPIView(ListAPIView):
-    serializer_class = UserReviewSeializer
+    def create(self, request. *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
 
-    def get_queryset(self):
-        menu_item_id = self.kwargs.get("menu_item_id")
-        return UserReview.objects.filter(menu_item_id=menu_item_id)
-
-
-class RestaurantInfoAPIView(APIView):
-    def get(self, request):
-        resturant = Restaurant.objects.first()
-        serializer = RestaurantSerializer(restaurant)
-        return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message":"Review created successfully", "data": serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            {"errors": serializer.errors},
+            status=status.HTTP_404_BAD_REQUEST
+        )
