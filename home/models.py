@@ -10,6 +10,7 @@ class MenuCategory(models.Model):
 
     def __str__(self):
         return self.name    #i have done this in vs.code
+        
 
 
 class Restaurant(models.Model):
